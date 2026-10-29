@@ -1,8 +1,17 @@
 import React from 'react'
 import {
-  Shield, Search, ClipboardList, Monitor, Lock,
-  BarChart3, FileCheck, Fingerprint, Globe, Database,
-  ScanLine, FileSearch
+  Shield,
+  Search,
+  ClipboardList,
+  Monitor,
+  Lock,
+  BarChart3,
+  FileCheck,
+  Fingerprint,
+  Globe,
+  Database,
+  ScanLine,
+  FileSearch
 } from 'lucide-react'
 
 const ICONS = [
@@ -17,7 +26,7 @@ const ICONS = [
   { Icon: Globe, label: 'Red' },
   { Icon: Database, label: 'Datos' },
   { Icon: ScanLine, label: 'Escaneo' },
-  { Icon: FileSearch, label: 'Hallazgos' },
+  { Icon: FileSearch, label: 'Hallazgos' }
 ]
 
 export default function CintilloAuditoria() {

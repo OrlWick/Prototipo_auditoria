@@ -13,17 +13,22 @@ const api = {
   eliminarUsuario: (id) => ipcRenderer.invoke('admin:eliminar-usuario', id),
 
   // Auditorías
-  crearAuditoria: (auditorId, titulo, fechaProgramada) =>
-    ipcRenderer.invoke('auditoria:crear', auditorId, titulo, fechaProgramada),
-  listarAuditorias: (auditorId, isAdmin) => ipcRenderer.invoke('auditoria:listar', auditorId, isAdmin),
+  crearAuditoria: (auditorId, titulo, fechaProgramada, password) =>
+    ipcRenderer.invoke('auditoria:crear', auditorId, titulo, fechaProgramada, password),
+  verificarPasswordAuditoria: (id, password) =>
+    ipcRenderer.invoke('verificar-password-auditoria', id, password),
+  listarAuditorias: (auditorId, isAdmin) =>
+    ipcRenderer.invoke('auditoria:listar', auditorId, isAdmin),
   getAuditoria: (id) => ipcRenderer.invoke('auditoria:get', id),
   guardarSeccion: (auditoriaId, seccion, datos) =>
     ipcRenderer.invoke('auditoria:guardar-seccion', auditoriaId, seccion, datos),
   getSecciones: (auditoriaId) => ipcRenderer.invoke('auditoria:get-secciones', auditoriaId),
   completarAuditoria: (auditoriaId) => ipcRenderer.invoke('auditoria:completar', auditoriaId),
   eliminarAuditoria: (id) => ipcRenderer.invoke('auditoria:eliminar', id),
-  getHistorialPredictivo: (auditorId, isAdmin) => ipcRenderer.invoke('auditoria:historial', auditorId, isAdmin),
-  getMetricasGlobales: (auditorId, isAdmin) => ipcRenderer.invoke('auditoria:metricas', auditorId, isAdmin),
+  getHistorialPredictivo: (auditorId, isAdmin) =>
+    ipcRenderer.invoke('auditoria:historial', auditorId, isAdmin),
+  getMetricasGlobales: (auditorId, isAdmin) =>
+    ipcRenderer.invoke('auditoria:metricas', auditorId, isAdmin),
   exportarCsv: (auditorId, isAdmin) => ipcRenderer.invoke('csv:exportar', auditorId, isAdmin),
   exportarExcel: (auditorId, isAdmin) => ipcRenderer.invoke('excel:exportar', auditorId, isAdmin),
 
@@ -33,6 +38,10 @@ const api = {
   descargarPdfDialog: (defaultName) => ipcRenderer.invoke('pdf:descargar-dialog', defaultName),
   guardarPdfNativo: (fileName, fileData) =>
     ipcRenderer.invoke('pdf:guardar-nativo', fileName, fileData),
+// WORD
+
+  generarWordEditable: (datos) => ipcRenderer.invoke('word:generar', datos),
+
 
   // Archivos
   selectImage: () => ipcRenderer.invoke('file:select-image'),

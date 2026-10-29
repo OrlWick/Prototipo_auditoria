@@ -1,14 +1,17 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
-import { join } from 'path'
+import { join, basename } from 'path' // basename importado aquí
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { initDatabase } from './db/init.js'
 import {
-  initDatabase,
   loginUser,
+  getUserById,
   createAuditor,
   listarUsuarios,
   actualizarUsuario,
-  eliminarUsuario,
+  eliminarUsuario
+} from './db/auth.js'
+import {
   crearAuditoria,
   getAuditorias,
   getAuditoriaById,
@@ -17,14 +20,18 @@ import {
   completarAuditoria,
   guardarPdfPath,
   deleteAuditoria,
+  verificarPasswordAuditoria
+} from './db/auditorias.js'
+import {
   getHistorialPredictivo,
   getMetricasGlobales,
   generateCsvData,
   generateExcelData
-} from './database'
-import { copyFileSync, mkdirSync, writeFileSync } from 'fs'
-import { basename } from 'path'
+} from './db/reportes.js'
+import { copyFileSync, mkdirSync, writeFileSync, readFileSync } from 'fs' // readFileSync importado aquí
 import ExcelJS from 'exceljs'
+import PizZip from 'pizzip' // IMPORTANTE: Nueva librería para Word
+import Docxtemplater from 'docxtemplater' // IMPORTANTE: Nueva librería para Word
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -85,9 +92,12 @@ app.whenReady().then(() => {
   ipcMain.handle('admin:eliminar-usuario', (_, id) => eliminarUsuario(id))
 
   // ── Auditorías ────────────────────────────────────────────────────────
-  ipcMain.handle('auditoria:crear', (_, auditorId, titulo, fechaProgramada) =>
-    crearAuditoria(auditorId, titulo, fechaProgramada)
+  ipcMain.handle('auditoria:crear', (_, auditorId, titulo, fechaProgramada, password) =>
+    crearAuditoria(auditorId, titulo, fechaProgramada, password)
   )
+  ipcMain.handle('verificar-password-auditoria', (_, id, password) => {
+    return verificarPasswordAuditoria(id, password)
+  })
   ipcMain.handle('auditoria:listar', (_, auditorId, isAdmin) => getAuditorias(auditorId, isAdmin))
   ipcMain.handle('auditoria:get', (_, id) => getAuditoriaById(id))
   ipcMain.handle('auditoria:guardar-seccion', (_, auditoriaId, seccion, datos) =>
@@ -96,8 +106,12 @@ app.whenReady().then(() => {
   ipcMain.handle('auditoria:get-secciones', (_, auditoriaId) => getSeccionesData(auditoriaId))
   ipcMain.handle('auditoria:completar', (_, auditoriaId) => completarAuditoria(auditoriaId))
   ipcMain.handle('auditoria:eliminar', (_, id) => deleteAuditoria(id))
-  ipcMain.handle('auditoria:historial', (_, auditorId, isAdmin) => getHistorialPredictivo(auditorId, isAdmin))
-  ipcMain.handle('auditoria:metricas', (_, auditorId, isAdmin) => getMetricasGlobales(auditorId, isAdmin))
+  ipcMain.handle('auditoria:historial', (_, auditorId, isAdmin) =>
+    getHistorialPredictivo(auditorId, isAdmin)
+  )
+  ipcMain.handle('auditoria:metricas', (_, auditorId, isAdmin) =>
+    getMetricasGlobales(auditorId, isAdmin)
+  )
 
   // ── Exportación CSV ───────────────────────────────────────────────────
   ipcMain.handle('csv:exportar', async (_, auditorId, isAdmin) => {
@@ -228,6 +242,51 @@ app.whenReady().then(() => {
     return null
   })
 
+  // ── Word (Nuevo Manejador) ─────────────────────────────────────────────
+  ipcMain.handle('word:generar', async (event, datos) => {
+    try {
+      // Ruta relativa para buscar "plantilla.docx" en el directorio raíz o en los recursos
+      // Asume que la plantilla "plantilla.docx" se colocará junto a este archivo compilado o en la raíz
+      let templatePath = ''
+      
+      if (is.dev) {
+         // En modo de desarrollo, busca la plantilla en la carpeta 'resources' en la raíz del proyecto
+         templatePath = join(__dirname, '../../resources/plantilla.docx')
+      } else {
+         // En producción, busca la plantilla en la ruta de recursos de Electron
+         templatePath = join(process.resourcesPath, 'plantilla.docx')
+      }
+
+      const content = readFileSync(templatePath, 'binary')
+      const zip = new PizZip(content)
+      
+      const doc = new Docxtemplater(zip, { 
+        paragraphLoop: true, 
+        linebreaks: true 
+      })
+
+      doc.render(datos)
+      
+      const buf = doc.getZip().generate({ type: 'nodebuffer' })
+      const nombreLimpio = datos.organizacion ? datos.organizacion.replace(/\s+/g, '_') : 'Auditoria'
+
+      const { canceled, filePath } = await dialog.showSaveDialog({
+        title: 'Guardar Informe Editable',
+        defaultPath: `Informe_${nombreLimpio}.docx`,
+        filters: [{ name: 'Documentos de Word', extensions: ['docx'] }]
+      })
+
+      if (canceled || !filePath) return { success: false, cancelado: true }
+
+      writeFileSync(filePath, buf)
+      return { success: true, path: filePath }
+
+    } catch (error) {
+      console.error('Error generando Word:', error)
+      return { success: false, error: error.message }
+    }
+  })
+
   // ── Archivos / Imágenes ───────────────────────────────────────────────
   ipcMain.handle('file:select-image', async () => {
     const { filePaths } = await dialog.showOpenDialog({
@@ -261,5 +320,3 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
-
-

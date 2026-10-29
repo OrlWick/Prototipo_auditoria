@@ -5,11 +5,7 @@ import { useAuthStore } from '../store/useStore'
 import NetworkBackground from '../components/NetworkBackground'
 import CintilloAuditoria from '../components/CintilloAuditoria'
 
-const FEATURES = [
-  'Cumplimiento ISO 27001',
-  'Inventario de equipos TI',
-  'Reportes inteligentes'
-]
+const FEATURES = ['Cumplimiento ISO 27001', 'Inventario de equipos TI', 'Reportes inteligentes']
 
 function useTypewriter(text, speed = 60) {
   const [displayed, setDisplayed] = useState('')
@@ -170,30 +166,30 @@ export default function LoginPage({ onLogin }) {
               </motion.div>
             </motion.div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35, duration: 0.5 }}
-                style={{
-                  fontSize: 36,
-                  fontWeight: 800,
-                  marginBottom: 6,
-                  letterSpacing: '-0.03em',
-                  lineHeight: 1.1
-                }}
-              >
-                <span className="gradient-text">AuditTech</span>
-              </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.5 }}
+              style={{
+                fontSize: 36,
+                fontWeight: 800,
+                marginBottom: 6,
+                letterSpacing: '-0.03em',
+                lineHeight: 1.1
+              }}
+            >
+              <span className="gradient-text">AuditTech</span>
+            </motion.h1>
 
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
               style={{
-                  fontSize: 15,
-                  color: 'var(--text-muted)',
-                  marginBottom: 32,
-                  fontFamily: 'var(--font-mono)',
+                fontSize: 15,
+                color: 'var(--text-muted)',
+                marginBottom: 32,
+                fontFamily: 'var(--font-mono)',
                 minHeight: 22
               }}
             >
@@ -232,11 +228,11 @@ export default function LoginPage({ onLogin }) {
                       width: 20,
                       height: 20,
                       borderRadius: 6,
-                    background: 'var(--accent-soft)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
+                      background: 'var(--accent-soft)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
                   >
                     <CheckCircle size={12} color="var(--accent)" />
                   </div>
@@ -411,23 +407,23 @@ export default function LoginPage({ onLogin }) {
               </div>
 
               {error && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      padding: '10px 12px',
-                      background: 'var(--danger-soft)',
-                      border: '1px solid rgba(229,72,77,0.3)',
-                      borderRadius: 8,
-                      marginBottom: 18
-                    }}
-                  >
-                    <AlertCircle size={14} color="var(--danger)" style={{ flexShrink: 0 }} />
-                    <span style={{ fontSize: 13, color: 'var(--danger)' }}>{error}</span>
-                  </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '10px 12px',
+                    background: 'var(--danger-soft)',
+                    border: '1px solid rgba(229,72,77,0.3)',
+                    borderRadius: 8,
+                    marginBottom: 18
+                  }}
+                >
+                  <AlertCircle size={14} color="var(--danger)" style={{ flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, color: 'var(--danger)' }}>{error}</span>
+                </motion.div>
               )}
 
               <button
@@ -455,10 +451,14 @@ export default function LoginPage({ onLogin }) {
                   overflow: 'hidden'
                 }}
                 onMouseEnter={(e) => {
-                  if (!loading) e.currentTarget.style.background = 'linear-gradient(135deg, #5a94ff, var(--accent))'
+                  if (!loading)
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #5a94ff, var(--accent))'
                 }}
                 onMouseLeave={(e) => {
-                  if (!loading) e.currentTarget.style.background = 'linear-gradient(135deg, var(--accent), #3b7de8)'
+                  if (!loading)
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, var(--accent), #3b7de8)'
                 }}
               >
                 {loading ? (
@@ -500,7 +500,9 @@ export default function LoginPage({ onLogin }) {
                 color: 'var(--text-muted)'
               }}
             >
-              Demo: <span style={{ color: 'var(--accent)', fontWeight: 600 }}>admin@audittech.com</span> / <span style={{ color: 'var(--text-secondary)' }}>admin123</span>
+              Demo:{' '}
+              <span style={{ color: 'var(--accent)', fontWeight: 600 }}>admin@audittech.com</span> /{' '}
+              <span style={{ color: 'var(--text-secondary)' }}>admin123</span>
             </motion.div>
           </motion.div>
         </motion.div>
